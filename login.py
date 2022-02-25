@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap
 import os
 from db_con import dbConnection
+import hashlib
 
 class Ui_Login(object):
     def setupUi(self, Login):
@@ -19,7 +20,6 @@ class Ui_Login(object):
         Login.resize(500, 200)
         Login.setMinimumSize(QtCore.QSize(500, 200))
         Login.setBaseSize(QtCore.QSize(500, 200))
-        Login.setModal(False)
         self.imagelabel = QtWidgets.QLabel(Login)
         self.imagelabel.setGeometry(QtCore.QRect(50, 30, 161, 121))
         self.imagelabel.setObjectName("imagelabel")
@@ -89,8 +89,8 @@ class Ui_Login(object):
         mess.exec_()
         
     def login(self):
-        email = self.lineEdit.text()
-        password = self.lineEdit_2.text()
+        email = self.lineEdit.text()    
+        password = hashlib.md5(self.lineEdit_2.text().encode('utf-8')).hexdigest()
         db = dbConnection()
         db.connect()
         query = f"SELECT count(*) FROM users WHERE email=\'{email}\' AND pass = \'{password}\'"
@@ -106,7 +106,7 @@ class Ui_Login(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Login = QtWidgets.QDialog()
+    Login = QtWidgets.QMainWindow()
     ui = Ui_Login()
     ui.setupUi(Login)
     Login.show()
